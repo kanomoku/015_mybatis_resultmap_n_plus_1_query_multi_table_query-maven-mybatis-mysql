@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mapper.TeacherMapper">
+
+	<resultMap id="mymap" type="com.pojo.Teacher" ><!-- teacher不是表名而是实体类名字 -->
+		<!-- 主键使用id标签配置映射关系 -->
+		<id column="id" property="id1" />
+		<!-- 其他列使用result标签来配置映射关系     如果不配置对应关系就找不到值，就在数据库中查不到然后赋值null -->
+		<result column="name" property="name1" />
+	</resultMap>
+	
+	<!--使用resultMap 实现单表映射关系 -->
+	<select id="selAll" resultMap="mymap">
+		select * from teacher
+	</select>
+
+	<select id="selById" parameterType="int" resultMap="mymap"  >
+		select * from teacher where id =#{0}
+	</select>
+	
+	<!-- 使用<resultMap>查询关联集合对象（表N+1次查询方式） -->
+	<resultMap type="teacher" id="mymap1">
+		<id column="id" property="id1" />
+		<result column="name" property="name1" />
+		<!-- 如果关联一个集合对象就是用这个标签 -->
+		<collection property="studentList" select="com.mapper.StudentMapper.selById" column="id"></collection>
+	</resultMap>
+	<select id="selAll1" resultMap="mymap1">
+		select * from teacher
+	</select>
+
+	<!-- 使用<resultMap>实现加载集合数据（联合查询） -->
+	<resultMap id="mymap2" type="teacher" >
+		<id column="tid" property="id1" />
+		<result column="tname" property="name1" />
+		<collection property="studentList" ofType="Student">
+			<id column="sid" property="id" />
+			<result column="sname" property="name" />
+			<result column="age" property="age" />
+			<result column="tid" property="tid" />
+		</collection>
+	</resultMap>
+	<select id="selAll2" resultMap="mymap2">
+		select t.id tid,t.name tname,s.id sid,s.name sname, age,tid 
+		from teacher t left join student s on t.id=s.tid;
+	</select>
+
+</mapper>

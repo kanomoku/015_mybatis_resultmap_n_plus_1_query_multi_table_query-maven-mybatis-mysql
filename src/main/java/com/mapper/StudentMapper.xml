@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mapper.StudentMapper">
+
+	<!-- 使用<resultMap>实现关联单个对象 (多表N+1次查询方式)   -->
+	<resultMap  id="stumap" type="Student"><!-- Student是实体类 -->
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="age" property="age" />
+		<result column="tid" property="tid" />
+		<!-- 如果关联一个对象就是用这个标签 -->
+		<association property="teacher" select="com.mapper.TeacherMapper.selById" column="tid"></association>
+	</resultMap>
+	<select id="selAll" resultMap="stumap">
+		select * from student
+	</select>
+
+	<!-- 使用resultMap 实现关联单个对象(联合查询方式) -->
+	<resultMap type="Student" id="stuMap1">
+		<id column="sid" property="id" />
+		<result column="sname" property="name" />
+		<result column="age" property="age" />
+		<result column="tid" property="tid" />
+		<association property="teacher" javaType="Teacher">
+			<id column="tid" property="id1" />
+			<result column="tname" property="name1" />
+		</association>
+	</resultMap>
+	<select id="selAll2" resultMap="stuMap1">
+		select s.id sid,s.name sname,age age,t.id tid,t.name tname 
+		FROM student s left outer join teacher t 
+		on s.tid=t.id
+	</select>
+	
+	<select id="selById" parameterType="int" resultType="student"><!-- resultMap="stumap" 会内存溢出 -->
+		select * from student where tid =#{0}
+	</select>
+
+	<select id="selAll1" resultType="student">
+		select t.id `teacher.id1`,t.name`teacher.name1`,s.id id,s.name name,age,tid
+		from student s left join teacher t 
+		on t.id=s.tid;
+	</select>
+</mapper>
