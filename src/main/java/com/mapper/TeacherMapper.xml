@@ -17,7 +17,7 @@
 		select * from teacher
 	</select>
 
-	<select id="selById" parameterType="int" resultMap="mymap"  >
+	<select id="selById" parameterType="int" resultType="com.pojo.Teacher"  >
 		select * from teacher where id =#{0}
 	</select>
 	

@@ -17,9 +17,18 @@
 	<select id="selAll" resultMap="stumap">
 		select * from student
 	</select>
-
+	
+	<!-- 以上简化  -->
+<!-- 	<resultMap  id="stumap" type="Student">Student是实体类
+		<result column="tid" property="tid" />
+		<association property="teacher" select="com.mapper.TeacherMapper.selById" column="tid"></association>
+	</resultMap>
+	<select id="selAll" resultMap="stumap">
+		select * from student
+	</select> -->
+	
 	<!-- 使用resultMap 实现关联单个对象(联合查询方式) -->
-	<resultMap type="Student" id="stuMap1">
+	<resultMap type="Student" id="stuMap11">
 		<id column="sid" property="id" />
 		<result column="sname" property="name" />
 		<result column="age" property="age" />
@@ -29,7 +38,7 @@
 			<result column="tname" property="name1" />
 		</association>
 	</resultMap>
-	<select id="selAll2" resultMap="stuMap1">
+	<select id="selAll2" resultMap="stuMap11">
 		select s.id sid,s.name sname,age age,t.id tid,t.name tname 
 		FROM student s left outer join teacher t 
 		on s.tid=t.id
